@@ -1,0 +1,131 @@
+---
+title: "STAT 4130: Homework4"
+author: "Wang Boqian"
+date: '2023-07-19'
+output: pdf_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+# if you are using libraries, it's good practice to load them here
+library(ggplot2)
+library(car)
+library(tibble)
+library(locfit)
+```
+
+## Question 1
+
+```{r}
+# please do your coding inside a code chunk
+# unless otherwise stated, feel free to do all computations in R
+# commented code is always appreciated
+
+#print("Hello")
+# 1a
+# Simple Linear Regression
+df <- read.csv("hw4.csv")
+lm1 = lm(y ~ x,data = df)
+# Residual Plot
+ggplot(df, aes(x=1:15, y=lm1$res)) + geom_point() + geom_line() + xlab("t") + ylab("Residuals")+ geom_hline(yintercept=0)
+
+# 1b
+# DW Test
+durbinWatsonTest(lm1, alt="positive")
+
+# 1c
+# Cochrane–Orcutt Iteration
+x = df$x
+y = df$y
+n = length(y)
+res = lm1$res
+rho.hat = sum(res[1:(n-1)]*res[2:n]) / sum(res*res)
+ystar = y[2:n] - rho.hat*y[1:(n-1)]
+xstar = x[2:n] - rho.hat*x[1:(n-1)]
+lm2 = lm(ystar ~ xstar)
+summary(lm2)
+
+# 1d
+# DW Test
+durbinWatsonTest(lm2, alt="positive")
+```
+
+#### 1a. 
+The time-plot shows quite smooth, which indicates a sign of positive autocorrelation.
+
+#### 1b. 
+Since the p-value = 0.003 < 0.05, we reject H0 and accept H1: There is a positive autocorrelation.
+
+#### 1c.
+According to the summary table, the standard error for intercept is 0.55421, and the standard error for slope is 0.01403.
+
+#### 1d,
+It has not been successful. Although the p-value is increased from 0.003 to 0.011, it's still far less than 0.05, where we still reject H0 and accept H1: There is a positive autocorrelation. We still need more iterations to reduce the autocorrelation.
+
+## Question 2
+```{r problem2Code}
+# Your code
+# 2a
+data <- tibble(
+discount = c(5,7,9,11,13,15,17,19,21,23,25),
+size = c(500,500,500,500,500,500,500,500,500,500,500),
+redeem = c(100,122,147,176,211,244,277,310,343,372,391)
+)
+lm3 <- glm(redeem ~ discount, data = data, family = gaussian())
+summary(lm3)
+
+# 2c
+plot(data$discount,data$redeem)
+abline(lm3)
+
+# 2d
+lm4 <- glm(redeem ~ discount + I(discount^2), data = data, family = gaussian())
+summary(lm4)
+
+# 2e
+plot(data$discount,data$redeem)
+abline(lm3)
+abline(lm4)
+
+# 2f
+confint(lm4)
+```
+
+#### 2b
+According to the summary table of lm3, we can calculate the R-squared, which equals to 0.997, which is close to 1. So we can't claim that the logistic regression model from part a is not adequate.
+
+#### 2d
+According to the summary table of lm4, we found that the p-value of the quadratic term = 0.620 >> 0.05. So this quadratic term is not required in the model as there is no strong evidence of non-linearity.
+
+#### 2e
+Yes, as the plot suggests, lm3 obviously underestimates most of the data, while data points in lm4 distributes more evenly.
+
+## Question 3
+```{r problem3Code}
+# Your Code
+# 3a
+data(mine)
+data2 = mine
+lm5 <- glm(frac ~ inb + extrp + seamh + time, data = data2, family = poisson(link = "log"))
+
+# 3c
+confint(lm5)
+
+# 3d
+lm6 <- glm(frac ~ inb + extrp, data = data2, family = poisson(link = "log"))
+anova(lm5,lm6, test = "LRT")
+
+# 3e
+plot(lm5, which = 1)
+plot(lm6, which = 1)
+```
+
+#### 3b
+According to the summary table of lm5, we can calculate the R-squared, which equals to 0.4951. This indicates that the model can interpret less than 50% of the data points, which is far from our satisfaction.
+
+#### 3d
+lm5 is reduced to lm6 by removing the variable "seamh" and "time" because their p-values are larger than 0.05. I found that the p-value of the Analysis of Deviance is 0.1202 > 0.05, which indicates that the reduced model(lm6) is preferred.
+
+#### 3e
+Not really. Simply deleting features does not make the figure satisfactory from a residual analysis viewpoint. Variable transformations and interactions should be taken into account to modify the model.
+

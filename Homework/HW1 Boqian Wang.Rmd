@@ -1,0 +1,170 @@
+---
+title: "STAT 4130: Homework (Template)"
+author: "Your name"
+date: '2023-05-27'
+output: pdf_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+# if you are using libraries, it's good practice to load them here
+```
+
+## Question 1
+
+```{r}
+# please do your coding inside a code chunk
+# unless otherwise stated, feel free to do all computations in R
+# commented code is always appreciated
+
+#print("Hello")
+```
+
+#### 1a. 
+[Write out your response as text, outside of code chunks/comments]
+The expectation of X E[X] = 1/2.
+The expectation of Y E[Y] = k
+The expectation of XY E[XY] = 5k/4.
+1) X and Y are correlated as E[XY] is not equal to E[X]*E[Y].
+2) X and Y are not independent because Y = k * X^2.
+3) X and Y are not orthogonal because E[XY] is not equal to 0.
+
+#### 1b. 
+[...]
+The expectation of X E[X] = 1/2.
+The expectation of Y E[Y] = k + c.
+The expectation of XY E[XY] = 5k/4 + c/2.
+1) X and Y are correlated as E[XY] is not equal to E[X]*E[Y](which is k/2+c/2)
+2) X and Y are not independent because Y = k * X^2 + c.
+3) X and Y are not orthogonal because E[XY] is not equal to 0.
+
+#### 1c.
+[...]
+The expectation of X E[X] = 0.
+The expectation of Y E[Y] = k/3.
+The expectation of XY E[XY] = 0.
+1) X and Y are uncorrelated as E[XY] = E[X] * E[Y] = 0.
+2) X and Y are not independent because Y = k * X^2.
+3) X and Y are orthogonal because E[XY] = 0.
+
+#### 1d.
+Conclusion:
+If X and Y are uncorrelated, X and Y are not necessarily orthogonal. If the expectation of X is 0 or the expectation of Y is 0, then X and Y are orthogonal.
+If X and Y are orthogonal, X and Y are uncorrelated.
+
+## Question 2
+#### 2a.
+In matrix notation, we can calculate SSR as follows:
+\begin{aligned}
+e^{\prime} e & =(y-X b)^{\prime}(y-X b) \\
+& =\left(y^{\prime}-(X b)^{\prime}\right)(y-X b) \\
+& =y^{\prime} y-y^{\prime} X b-(X b)^{\prime} y+(X b)^{\prime} X b \\
+& =y^{\prime} y-2 b^{\prime} X^{\prime} y+b^{\prime} X^{\prime} X b
+\end{aligned}
+
+#### 2b.
+We now take the derivative of the last expression:
+\begin{aligned}
+-2 X^{\prime} y+2 X^{\prime} X b & =0 \\
+\Rightarrow \quad-X^{\prime} y+X^{\prime} X b & =0 \\
+\Rightarrow \quad X^{\prime} X b & =X^{\prime} y
+\end{aligned}
+As a result, b is given by:
+b=\left(X^{\prime} X\right)^{-1} X^{\prime} y
+If X'X is non-singular.
+
+#### 2c.
+\begin{aligned}
+\hat{\beta} & =\left(X^{\prime} X\right)^{-1} X^{\prime}(X \beta+u) \\
+& =\left(X^{\prime} X\right)^{-1}\left(X^{\prime} X\right) \beta+\left(X^{\prime} X\right)^{-1} X^{\prime} u \\
+& =\beta+\left(X^{\prime} X\right)^{-1} X^{\prime} u
+\end{aligned}
+It is an unbiased estimator, as:
+E(\hat{\beta})=E\left[\beta+\left(X^{\prime} X\right)^{-1} X^{\prime} u\right]=\beta+E\left[\left(X^{\prime} X\right)^{-1} X^{\prime} u\right]
+So the relationship between \hat{\beta} and B is the expectation of \hat{\beta_{1}}, ..., \hat{\beta_{k}} equals to the SSR.
+
+
+## Question 3
+```{r problem3Code}
+# Your Code
+
+#3a.
+library(MASS)
+data1 = Boston
+lm1 = lm(crim ~ zn, data = data1)
+lm2 = lm(crim ~ indus, data = data1)
+lm3 = lm(crim ~ chas, data = data1)
+lm4 = lm(crim ~ nox, data = data1)
+lm5 = lm(crim ~ rm, data = data1)
+lm6 = lm(crim ~ age, data = data1)
+lm7 = lm(crim ~ dis, data = data1)
+lm8 = lm(crim ~ rad, data = data1)
+lm9 = lm(crim ~ tax, data = data1)
+lm10 = lm(crim ~ ptratio, data = data1)
+lm11 = lm(crim ~ black, data = data1)
+lm12 = lm(crim ~ lstat, data = data1)
+lm13 = lm(crim ~ medv, data = data1)
+
+#3b.
+lm14 = lm(crim ~ zn + indus + chas + nox + rm + age + dis + rad + tax + ptratio + black + lstat + medv, data = data1)
+
+
+#3c.
+x = c(-0.07393, 0.5098, -1.893, 31.25, -2.684, 0.1078, -1.551, 0.6179, 0.02974, 1.152, -0.03628, 0.5488, -0.3632)
+
+y = c(0.044855, -0.063855, -0.749134, -10.313535, 0.430131, 0.001452, -0.987176, 0.588209, -0.003780, -0.271081, -0.007538, 0.126211, -0.198887)
+
+plot(x,y)
+
+#3d.
+lm1full = lm(crim ~ zn + I(zn^2) + I(zn^3), data = data1)
+lm2full = lm(crim ~ indus + I(indus^2) + I(indus^3), data = data1)
+lm3full = lm(crim ~ chas + I(chas^2) + I(chas^3), data = data1)
+lm4full = lm(crim ~ nox + I(nox^2) + I(nox^3), data = data1)
+lm5full = lm(crim ~ rm + I(rm^2) + I(rm^3), data = data1)
+lm6full = lm(crim ~ age + I(age^2) + I(age^3), data = data1)
+lm7full = lm(crim ~ dis + I(dis^2) + I(dis^3), data = data1)
+lm8full = lm(crim ~ rad + I(rad^2) + I(rad^3), data = data1)
+lm9full = lm(crim ~ tax + I(tax^2) + I(tax^3), data = data1)
+lm10full = lm(crim ~ ptratio + I(ptratio^2) + I(ptratio^3), data = data1)
+lm11full = lm(crim ~ black + I(black^2) + I(black^3), data = data1)
+lm12full = lm(crim ~ lstat + I(lstat^2) + I(lstat^3), data = data1)
+lm13full = lm(crim ~ medv + I(medv^2) + I(medv^3), data = data1)
+
+anova(lm1,lm1full)
+anova(lm2,lm2full)
+anova(lm3,lm3full)
+anova(lm4,lm4full)
+anova(lm5,lm5full)
+anova(lm6,lm6full)
+anova(lm7,lm7full)
+anova(lm8,lm8full)
+anova(lm9,lm9full)
+anova(lm10,lm10full)
+anova(lm11,lm11full)
+anova(lm12,lm12full)
+anova(lm13,lm13full)
+```
+#### 3b.
+
+When testing the null hypothesis, we should apply the two-tailed t-test. Firstly we should calculate the t-statistic by dividing $\beta_j$ by the statistical error of $\beta_j$. Then we can reject $H_0$ if t is smaller than $-t_\alpha/2$ or greater than $t_\alpha/2$.
+
+#### 3c.
+
+Results from (1) are relatively inaccurate and one-sided, while results from (2) are more comprehensive and persuasive. For example, the column of "chas" is constant 0 in this example, which make lm3 meaningless.
+
+#### 3d.
+
+anova(lm1, lm1full): P-value = 0.008512 < 0.05 It fits more in the cubic model for "zn".
+anova(lm2, lm2full): P-value = 8.409e-1 < 0.05 It fits more in the cubic model for "indus"
+anova(lm3, lm3full): P-value = 0 Because all of the data for "chas" is 0
+anova(lm4, lm4full): P-value < 2.2e-16 It fits more in the cubic model for "nox"
+anova(lm5, lm5full): P-value = 0.005229 < 0.05 It fits more in the cubic model for "rm"
+anova(lm6, lm6full): P-value  = 4.125e-07 < 0.05 It fits more in the cubic model for "age"
+anova(lm7, lm7full): P-value < 2.2e-16 It fits more in the cubic model for "dis"
+anova(lm8, lm8full): P-value = 0.02608 < 0.05 It fits more in the cubic model for "rad"
+anova(lm9, lm9full): P-value = 1.144e-05 < 0.05 It fits more in the cubic model for "tax"
+anova(lm10, lm10full): P-value = 0.0002542 < 0.05 It fits more in the cubic model for "ptratio"
+anova(lm11, lm11full): P-value = 0.6302 > 0.05 It fits more in the linear model for "black"
+anova(lm12, lm12full): P-value = 0.03698 < 0.05 It fits more in the cubic model for "lstat"
+anova(lm13, lm13full): P-value < 2.2e-16 It fits more in the cubic model for "medv"

@@ -1,0 +1,100 @@
+---
+title: "STAT 4130: Homework (Template)"
+author: "Your name"
+date: '2023-05-27'
+output: pdf_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+# if you are using libraries, it's good practice to load them here
+library(ggplot2)
+```
+
+## Question 1
+
+```{r}
+# please do your coding inside a code chunk
+# unless otherwise stated, feel free to do all computations in R
+# commented code is always appreciated
+
+#print("Hello")
+```
+
+#### 1
+I have directly written this part in latex, you could refer to the .pdf file to judge this problem, thanks!
+
+
+## Question 2
+```{r problem2Code}
+# Your code
+# 2.a
+data = read.table('hw3.txt')
+lm1 = lm(y ~ x8, data = data)
+
+# 2.b
+qqnorm(rstudent(lm1))
+qqline(rstudent(lm1))
+
+# 2.c
+anova(lm1)
+
+# 2.d
+confint(lm1,"x8")
+
+# 2.e
+summary(lm1)
+
+# 2.f
+# 95% CI:
+predict(lm1, data.frame(x8=2000), interval="confidence")
+# 95% PI:
+predict(lm1, data.frame(x8=2000), interval="prediction")
+
+# 2.g
+ggplot(data, aes(x=x8, y=rstudent(lm1)))+geom_point()+labs(x = "x8", y= "Studentized Residuals")+geom_hline(yintercept = 0, col=2)
+
+# 2.h
+ggplot(data, aes(x=x2, y=rstudent(lm1)))+geom_point()+labs(x = "x2", y= "Studentized Residuals")+geom_hline(yintercept = 0, col=2)
+
+# 2.i
+# We try to apply FS method:
+lm3 = lm(formula = y ~ 1, data = data)
+# First iteration:
+lm4 = lm(formula = y ~ x8, data = data)
+# Second iteration:
+lm5 = lm(formula = y ~ x2 + x8, data = data)
+# Third iteration:
+lm6 = lm(formula = y ~ x2 + x7 + x8, data = data)
+# Verification:
+lm7 = lm(formula = y ~ x2, data = data)
+lm8 = lm(formula = y ~ x7, data = data)
+# Component x2:
+ggplot(data, aes(x=x2, y=rstudent(lm7))) + geom_point() +xlab("x2") + ylab("Studentized Residuals") +geom_hline(yintercept = 0, col=2)
+# Component x7:
+ggplot(data, aes(x=x7, y=rstudent(lm8))) + geom_point() +xlab("x7") + ylab("Studentized Residuals") +geom_hline(yintercept = 0, col=2)
+# Component x8
+ggplot(data, aes(x=x8, y=rstudent(lm4))) + geom_point() +xlab("x8") + ylab("Studentized Residuals") +geom_hline(yintercept = 0, col=2)
+```
+
+#### 2b.
+We assume that the errors are normally distributed based on the normality assumption, howeverm the Normal Q-Q Plot suggests a light-tailed data.
+
+#### 2c.
+The p-value of the regression is 7.381e-06, which is far less than 0.05. So we reject H0 and conclude that the regression is significant.
+
+#### 2d.
+The 95% confident interval of the slope is [-0.009614347,-0.004435854].
+
+#### 2e.
+As the R-squared is 0.5447, the total variability in y is explained by this model is 54.47%.
+
+#### 2f.
+The 95% confidence interval is [6.765753,8.710348], while the 95% prediction interval is [2.724248,12.75185].
+
+#### 2g.
+Interpretation: This is roughly an ideal case as the residuals are evenly distributed around 0.
+
+#### 2h.
+Yes. As the plot suggests, the linear fit of lm2 is accurate and the variance is evenly distributed. With a constant variance, the model can be improved with x2 added to the model.
+
